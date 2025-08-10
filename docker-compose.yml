@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: npm start
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
+      - NEXT_PUBLIC_WS_URL=ws://localhost:3001/ws
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: npm start
+    depends_on:
+      - backend
+
+  # Optional MongoDB service for future data persistence
+  # mongodb:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   environment:
+  #     - MONGO_INITDB_DATABASE=indian-equity
+  #   volumes:
+  #     - mongodb_data:/data/db
+
+# volumes:
+#   mongodb_data:
